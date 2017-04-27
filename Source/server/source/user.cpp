@@ -1,5 +1,6 @@
 #include <iostream>
 #include "user.h"
+#include "socket_user.h"
 
 using namespace std;
 
@@ -15,7 +16,10 @@ user::~user()
 
 int user::create_new_users_thread(user *p_user)
 {
-	cout << p_user << endl;
+	int create_user_thread_err;
+
+	create_user_thread_err = pthread_create(&m_pUsertid,NULL,socket_user_thread,(void*)p_user);
+
 	return 0;
 }
 
@@ -35,4 +39,9 @@ unsigned int user::get_m_iUserID()
 int user::get_m_iUser_socket_ID()
 {
 	return m_iUser_socket_ID;
+}
+
+int user::get_m_pUsertid()
+{
+	return m_pUsertid;
 }

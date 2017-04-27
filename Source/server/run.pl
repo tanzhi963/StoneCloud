@@ -1,1 +1,1 @@
-g++ ./source/main.cpp ./source/logining_user.cpp ./source/socket_server.cpp ./source/user.cpp -o ./debug/server -pthread
+g++ ./source/main.cpp ./source/logining_user.cpp ./source/socket_server.cpp ./source/user.cpp ./source/socket_user.cpp -o ./debug/server -pthread

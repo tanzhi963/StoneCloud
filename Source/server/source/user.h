@@ -2,6 +2,7 @@
 #define USER_H
 
 #include <string>
+#include <pthread.h>
 
 class user
 {
@@ -13,12 +14,14 @@ public:
 	unsigned int get_m_iUserID();
 	int get_m_iUser_socket_ID();
 	int create_new_users_thread(user *p_user);
+	int get_m_pUsertid();
 	
 private:
 	
 //	string m_strName;
 	unsigned int m_iUserID;						//用户ID
 	int m_iUser_socket_ID;						//用户socket标识符
+	pthread_t m_pUsertid;
 	
 };
 
