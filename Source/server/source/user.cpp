@@ -4,9 +4,12 @@
 
 using namespace std;
 
-user::user()
+user::user(int _iUser_socket_ID)
 {
 	cout << "user object created !" << endl;
+	this -> set_m_iUser_socket_ID(_iUser_socket_ID);
+	//每一个用户创建一个线程，此线程仅归该用户所有
+	int create_user_thread_err = pthread_create(&m_pUsertid,NULL,socket_user_thread,(void*)this);
 }
 
 user::~user()
@@ -14,14 +17,6 @@ user::~user()
 	cout << "user object be free !" << endl;
 }
 
-int user::create_new_users_thread(user *p_user)
-{
-	int create_user_thread_err;
-
-	create_user_thread_err = pthread_create(&m_pUsertid,NULL,socket_user_thread,(void*)p_user);
-
-	return 0;
-}
 
 
 void user::set_m_iUserID(unsigned int _iUserID)

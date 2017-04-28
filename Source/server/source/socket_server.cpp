@@ -36,18 +36,7 @@ void* socket_mian_thread(void *arg)
 	{
 		//等待用户发起请求
 		int clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
-		user *user_new = new user();					//接收到请求，创建对象
-		user_new->set_m_iUser_socket_ID(clnt_sock);		//将socket标识符写入对象属性
-		//为新的用户创建新的线程，完全为此用户负责，生命周期伴随用户的生命周期
-		if(user_new->create_new_users_thread(user_new) == 0)
-		{
-			cout << "new user object created success!" << endl;
-		}
-		else
-		{
-			cout << "new user object created failed !!" << endl;
-		}
-		
+		user *user_new = new user(clnt_sock);			//接收到请求，创建对象，将socket标识符写入对象属性
 		
 	}
    
