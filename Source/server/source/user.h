@@ -12,8 +12,6 @@ public:
 	~user();
 
 
-
-
 	//类的属性封装函数
 	void set_m_iUserID(unsigned int _iUserID);
 	void set_m_iUser_socket_ID(int _iUser_socket_ID);
