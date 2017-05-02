@@ -7,11 +7,12 @@
 using namespace std;
 
 //构造函数
-logining_user::logining_user(int _iLogining_user_socket_ID)
+logining_user::logining_user(int _iSocketid)
 {
 	cout << "Logining user object created !" << endl;
-	this -> set_m_iLogining_user_socket_ID(_iLogining_user_socket_ID);
-	int create_user_thread_err = pthread_create(&m_iLogining_user_socket_ID,NULL,socket_user_thread,(void*)this);
+	this -> set_socketid(_iSocketid);
+	this -> set_status(NOTGETVERSION);
+	int create_user_thread_err = pthread_create(&m_pTid,NULL,socket_logining_user_thread,(void*)this);
 }
 
 logining_user::~logining_user()
@@ -20,17 +21,37 @@ logining_user::~logining_user()
 }
 
 
-void logining_user::set_m_iLogining_user_socket_ID(int _iLogining_user_socket_ID)
+void logining_user::set_socketid(int _iSocketid)
 {
-	m_iLogining_user_socket_ID = _iLogining_user_socket_ID;
+	m_iSocket_ID = _iSocketid;
 }
 
-int logining_user::get_m_iLogining_user_socket_ID()
+int logining_user::get_socketid()
 {
-	return m_iLogining_user_socket_ID;
+	return m_iSocket_ID;
 }
 
-int logining_user::get_m_pLogining_usertid()
+int logining_user::get_tid()
 {
-	return m_pLogining_usertid;
+	return m_pTid;
+}
+
+void logining_user::set_status(int _status)
+{
+	m_iStatus = _status;
+}
+
+int logining_user::get_status()
+{
+	return m_iStatus;
+}
+
+void logining_user::set_protocol(char _protocol)
+{
+	m_cProtocol = _protocol;
+}
+
+char logining_user::get_protocol()
+{
+	return m_cProtocol;
 }

@@ -36,7 +36,7 @@ void* socket_mian_thread(void *arg)
 	{
 		//等待用户发起请求
 		int clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
-		user *user_new = new user(clnt_sock);			//接收到请求，创建对象，将socket标识符写入对象属性
+		logining_user *logining_user_new = new logining_user(clnt_sock);			//接收到请求，创建对象，将socket标识符写入对象属性
 		
 	}
    
