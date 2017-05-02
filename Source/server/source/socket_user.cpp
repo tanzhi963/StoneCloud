@@ -1,8 +1,10 @@
 #include <iostream>
 #include <unistd.h>
 #include <string.h>
+#include <string>
 
 #include "socket_user.h"
+#include "logining_user.h"
 #include "user.h"
 
 using namespace std;
@@ -17,14 +19,14 @@ string command_tables[] = {
 
 void* socket_user_thread(void *arg)
 {
-	user *user_new = (user *)arg;				//将对象转换回来
+	logining_user *logining_user_new = (logining_user *)arg;				//将对象转换回来
 	bool connect_status = 1;					//用来表示用户当前SOCKET连接状态，连接：1；断开：0
 	char receive_buff[RECEIVE_LENGTH] = {0};	//存放客户端发送来的指令信息
 	int read_length_count = 0;					//缓存读取套接字的长度
 	string command;
 	while(connect_status)						//一直接收指令
 	{
-		read_length_count = read(user_new->get_m_iUser_socket_ID(),receive_buff,sizeof(receive_buff));
+		read_length_count = read(logining_user_new->get_m_iLogining_user_socket_ID(),receive_buff,sizeof(receive_buff));
 		command = receive_buff;
 		cout << "command return : " << command_analysis(receive_buff) << endl;
 
