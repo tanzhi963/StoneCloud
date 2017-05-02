@@ -55,3 +55,8 @@ char logining_user::get_protocol()
 {
 	return m_cProtocol;
 }
+
+char logining_user::checkUserNamePassword(char *_name,char *_password)
+{
+	
+}

@@ -32,8 +32,11 @@ void* socket_logining_user_thread(void *arg)
 		{
 			if(strncmp("v",receive_buff,1) == 0)
 			{
-				logining_user_new->set_protocol(receive_buff[1]);
-				logining_user_new->set_status(NOTGETUSERPASS);
+				if(receive_buff[1] <= PROTOCOLCOUNT)
+				{
+					logining_user_new->set_protocol(receive_buff[1]);			//将版本号赋值实例
+					logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
+				}
 			}
 		}
 		//已经上传协议版本号，等待上传用户名和密码
@@ -41,6 +44,18 @@ void* socket_logining_user_thread(void *arg)
 		{
 			if(strncmp("l",receive_buff,1) == 0)
 			{
+				char user_name_length = receive_buff[1];
+				char user_pass_length = read_length_count-user_name_length-2;
+				char user_name_buff[user_name_length] = {0};
+				char user_pass_buff[user_pass_length] = {0};
+				for(int i=0;i<user_name_length;i++)
+				{
+					user_name_buff[i] = receive_buff[i+2];
+				}
+				for(i=0;i<user_pass_length;i++)
+				{
+					user_pass_buff[i] = receive_buff[i+user_name_length+2]
+				}
 
 			}
 		}

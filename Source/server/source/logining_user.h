@@ -9,8 +9,11 @@
 #ifndef LOGINING_USER
 #define LOGINING_USER
 
-#define NOTGETVERSION 0
-#define NOTGETUSERPASS 1
+#define NOTGETVERSION 0					//用户连接到服务器，未发送版本号
+#define NOTGETUSERPASS 1				//用户已经发送完版本号，未发送用户名密码
+
+
+#define PROTOCOLCOUNT 1					//通讯协议种类数量
 
 class logining_user 
 {
@@ -28,6 +31,9 @@ public:
 	int get_status();
 	void set_protocol(char _protocol);
 	char get_protocol();
+	void set_userID(unsigned int _userID);
+	unsigned int get_userID();
+	char checkUserNamePassword(char *_name,char *_password);
 	
 private:
 	
@@ -36,7 +42,7 @@ private:
 	pthread_t m_pTid;						//该用户的线程ID
 	int m_iStatus;							//用户登录状态
 	char m_cProtocol;						//通讯版本号
-	
+	unsigned int m_iUserID;					//用户唯一标识符
 	
 };
 
