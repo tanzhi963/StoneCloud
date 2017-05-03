@@ -10,6 +10,7 @@
 using namespace std;
 
 #define RECEIVE_LENGTH 1024
+#define RETURNLENGTH 1024
 
 
 string command_tables[] = {
@@ -23,6 +24,7 @@ void* socket_logining_user_thread(void *arg)
 	logining_user *logining_user_new = (logining_user *)arg;				//将对象转换回来
 	bool connect_status = 1;					//用来表示用户当前SOCKET连接状态，连接：1；断开：0
 	char receive_buff[RECEIVE_LENGTH] = {0};	//存放客户端发送来的指令信息
+	char returnBuff[RETURNLENGTH] = {0};		//存放返回客户端的指令
 	while(connect_status)						//一直接收指令
 	{
 		//读取从客户端发送来的指令
@@ -30,12 +32,13 @@ void* socket_logining_user_thread(void *arg)
 		//当前客户端尚未上传通讯协议版本号
 		if(logining_user_new->get_status() == NOTGETVERSION)
 		{
-			if(strncmp("v",receive_buff,1) == 0)
+			if(strncmp("v",receive_buff,1) == 0)								//如果收到是版本指令
 			{
-				if(receive_buff[1] <= PROTOCOLCOUNT)
+				if(receive_buff[1] <= PROTOCOLCOUNT)							//数值是否小于总通讯协议版本数
 				{
 					logining_user_new->set_protocol(receive_buff[1]);			//将版本号赋值实例
 					logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
+					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
 				}
 			}
 		}
@@ -52,11 +55,19 @@ void* socket_logining_user_thread(void *arg)
 				{
 					user_name_buff[i] = receive_buff[i+2];
 				}
-				for(i=0;i<user_pass_length;i++)
+				for(int i=0;i<user_pass_length;i++)
 				{
-					user_pass_buff[i] = receive_buff[i+user_name_length+2]
+					user_pass_buff[i] = receive_buff[i+user_name_length+2];
 				}
+				checkUserNamePasswordResult = logining_user_new->checkUserNamePassword(user_name_buff,user_pass_buff);
+				if(checkUserNamePasswordResult == 0)							//用户名密码检测通过
+				{
 
+				}
+				else
+				{
+
+				}
 			}
 		}
 		

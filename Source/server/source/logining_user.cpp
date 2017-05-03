@@ -6,6 +6,32 @@
 
 using namespace std;
 
+struct userDataStruct
+{
+	unsigned int userID;
+	char userName[1024];
+	char userPassword[1024];
+}userData[3] = 
+{
+	{
+		0x00000001,
+		"tanzhi963",
+		"19921103"
+	},
+	{
+		0x00000002,
+		"decemberwww"
+		"wcllllllll"
+	},
+	{
+		0x00000003,
+		"test",
+		"test"
+	}
+};
+
+
+
 //构造函数
 logining_user::logining_user(int _iSocketid)
 {
@@ -58,5 +84,12 @@ char logining_user::get_protocol()
 
 char logining_user::checkUserNamePassword(char *_name,char *_password)
 {
+	for(int i=0;i<sizeof(userData);i++)
+	{
+		if(strncmp(_name,userData[i].userName) == 0)
+		{
+
+		}
+	}
 	
 }
