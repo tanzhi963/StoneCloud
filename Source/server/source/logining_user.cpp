@@ -47,6 +47,23 @@ logining_user::~logining_user()
 }
 
 
+
+
+char logining_user::checkUserNamePassword(char *_name,char *_password)
+{
+	for(int i=0;i<sizeof(userData);i++)										//遍历数据库数组的每一个成员
+	{
+		if(strncmp(_name,userData[i].userName) == 0)						//如果有用户名可以匹配
+		{
+			if(strncmp(_password,userData[i].userPassword) == 0)			//并且用户密码匹配
+			{
+				return 0;													//如果用户名密码匹配，则校验通过
+			}
+		}
+	}
+	
+}
+
 void logining_user::set_socketid(int _iSocketid)
 {
 	m_iSocket_ID = _iSocketid;
@@ -80,16 +97,4 @@ void logining_user::set_protocol(char _protocol)
 char logining_user::get_protocol()
 {
 	return m_cProtocol;
-}
-
-char logining_user::checkUserNamePassword(char *_name,char *_password)
-{
-	for(int i=0;i<sizeof(userData);i++)
-	{
-		if(strncmp(_name,userData[i].userName) == 0)
-		{
-
-		}
-	}
-	
 }
