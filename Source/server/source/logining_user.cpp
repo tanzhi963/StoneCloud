@@ -1,5 +1,6 @@
 #include <iostream>
 #include <pthread.h>
+#include <string.h>
 
 #include "logining_user.h"
 #include "socket_user.h"
@@ -20,7 +21,7 @@ struct userDataStruct
 	},
 	{
 		0x00000002,
-		"decemberwww"
+		"decemberwww",
 		"wcllllllll"
 	},
 	{
@@ -51,16 +52,22 @@ logining_user::~logining_user()
 
 char logining_user::checkUserNamePassword(char *_name,char *_password)
 {
-	for(int i=0;i<sizeof(userData);i++)										//遍历数据库数组的每一个成员
+	for(int i=0;i<3;i++)										//遍历数据库数组的每一个成员
 	{
-		if(strncmp(_name,userData[i].userName) == 0)						//如果有用户名可以匹配
+		cout << "user name :" << userData[i].userName << " user pass :" << userData[i].userPassword << endl;
+		if(strncmp(_name,userData[i].userName,9) == 0)						//如果有用户名可以匹配
 		{
-			if(strncmp(_password,userData[i].userPassword) == 0)			//并且用户密码匹配
+			if(strncmp(_password,userData[i].userPassword,8) == 0)			//并且用户密码匹配
 			{
 				return 0;													//如果用户名密码匹配，则校验通过
 			}
+			else
+			{
+				return 1;													//密码不匹配
+			}
 		}
 	}
+	return 2;																//遍历数据库没有此用户名
 	
 }
 

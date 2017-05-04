@@ -38,8 +38,14 @@ void* socket_logining_user_thread(void *arg)
 				{
 					logining_user_new->set_protocol(receive_buff[1]);			//将版本号赋值实例
 					logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
+					returnBuff[0] = 0x00;
 					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
 				}
+			}
+			else
+			{
+				returnBuff[0] = 0xff;
+				int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
 			}
 		}
 		//已经上传协议版本号，等待上传用户名和密码
@@ -47,6 +53,7 @@ void* socket_logining_user_thread(void *arg)
 		{
 			if(strncmp("l",receive_buff,1) == 0)
 			{
+				//收到用户名密码登陆指令，将用户名和密码赋值到缓存中进行保存，并进行检查
 				char user_name_length = receive_buff[1];
 				char user_pass_length = read_length_count-user_name_length-2;
 				char user_name_buff[user_name_length] = {0};
@@ -59,20 +66,39 @@ void* socket_logining_user_thread(void *arg)
 				{
 					user_pass_buff[i] = receive_buff[i+user_name_length+2];
 				}
-				checkUserNamePasswordResult = logining_user_new->checkUserNamePassword(user_name_buff,user_pass_buff);
+				//检查用户名密码是否正确
+				int checkUserNamePasswordResult = logining_user_new->checkUserNamePassword(user_name_buff,user_pass_buff);
 				if(checkUserNamePasswordResult == 0)							//用户名密码检测通过
 				{
-
+					returnBuff[0] = 0x01;
+					logining_user_new->set_status(NOTGETVERSION);
+					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
 				}
-				else
+				else if(checkUserNamePasswordResult == 1)						//密码不匹配
 				{
-
+					returnBuff[0] = 0xf0;
+					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
+				}
+				else if(checkUserNamePasswordResult == 2)						//没有此用户名
+				{
+					returnBuff[0] = 0xf1;
+					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
 				}
 			}
+			else
+			{
+				returnBuff[0] = 0xff;
+				int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
+			}
+		}
+		else
+		{
+
 		}
 		
 
 		memset(receive_buff,0,sizeof(receive_buff));
+		memset(returnBuff,0,sizeof(returnBuff));
 	}
 }
 
