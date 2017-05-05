@@ -9,12 +9,7 @@
 #ifndef LOGINING_USER
 #define LOGINING_USER
 
-#define NOTGETVERSION 0					//用户连接到服务器，未发送版本号
-#define NOTGETUSERPASS 1				//用户已经发送完版本号，未发送用户名密码
 
-
-#define PROTOCOL 1						//通讯协议版本号
-#define CLIENTVISION 0x00000001			//当前最新客户端版本号
 
 class logining_user 
 {

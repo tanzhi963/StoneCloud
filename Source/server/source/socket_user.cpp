@@ -13,30 +13,25 @@ using namespace std;
 #define RETURNLENGTH 1024
 
 
-string command_tables[] = {
-	"hello",
-	"bye"
-};
-
 
 void* socket_logining_user_thread(void *arg)
 {
-	logining_user *logining_user_new = (logining_user *)arg;				//将对象转换回来
-	bool connect_status = 1;					//用来表示用户当前SOCKET连接状态，连接：1；断开：0
-	char receive_buff[RECEIVE_LENGTH] = {0};	//存放客户端发送来的指令信息
-	char returnBuff[RETURNLENGTH] = {0};		//存放返回客户端的指令
-	while(connect_status)						//一直接收指令
+	logining_user *logining_user_new = (logining_user *)arg;			//将对象转换回来
+	bool connect_status = 1;											//用来表示用户当前SOCKET连接状态，连接：1；断开：0
+	char receive_buff[RECEIVE_LENGTH] = {0};							//存放客户端发送来的指令信息
+	char returnBuff[RETURNLENGTH] = {0};								//存放返回客户端的指令
+	while(connect_status)												//一直接收指令
 	{
 		//读取从客户端发送来的指令
 		int read_length_count = read(logining_user_new->get_socketid(),receive_buff,sizeof(receive_buff));
 		//当前客户端尚未上传通讯协议版本号
 		if(logining_user_new->get_status() == NOTGETVERSION)
 		{
-			if(receive_buff[0] == 0x01)									//如果收到是版本指令
+			if(receive_buff[0] == VERSIONCMD)							//如果收到是版本指令
 			{
 				if(receive_buff[1] < PROTOCOL)							//客户端通讯协议的版本号是旧版本
 				{
-					logining_user_new->returnChar(0x83);				//有新版通讯协议更新，必须更新客户端，不允许登录
+					logining_user_new->returnChar(PROTOCOLOLD);			//有新版通讯协议更新，必须更新客户端，不允许登录
 				}
 				else if(receive_buff[1] == PROTOCOL)					//是最新的通讯协议
 				{
@@ -52,33 +47,33 @@ void* socket_logining_user_thread(void *arg)
 						logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
 						if(clientVersion == CLIENTVISION)
 						{
-							logining_user_new->returnChar(0x01);
+							logining_user_new->returnChar(VERSIONPASS);	//版本为最新，返回正常
 						}
 						else
 						{
-							logining_user_new->returnChar(0x02);
+							logining_user_new->returnChar(CLIENTVISIONOLD);	//客户端版本较低，提示升级，可以下一步
 						}
 					}
 					else												//客户端版本号异常，请重新发送
 					{
-						logining_user_new->returnChar(0x84);
+						logining_user_new->returnChar(CLIENTVISIONINVALID);
 					}
 					
 				}
 				else													//收到错误版本号，可能收到残包
 				{
-					logining_user_new->returnChar(0x82);				//版本号未知，可能收到残包，请重新发送
+					logining_user_new->returnChar(PROTOCOLINVALID);		//版本号未知，可能收到残包，请重新发送
 				}
 			}
 			else														//收到其他指令
 			{
-				logining_user_new->returnChar(0xff);					//返回错误“-1”
+				logining_user_new->returnChar(CMDINVALID);				//返回错误“-1”
 			}
 		}
 		//已经上传协议版本号，等待上传用户名和密码
 		else if(logining_user_new->get_status() == NOTGETUSERPASS)
 		{
-			if(strncmp("l",receive_buff,1) == 0)
+			if(receive_buff[0] == USERNAMEPASSCMD)						//收到用户名密码指令
 			{
 				//收到用户名密码登陆指令，将用户名和密码赋值到缓存中进行保存，并进行检查
 				char user_name_length = receive_buff[1];
@@ -134,18 +129,3 @@ void* socket_user_thread(void *arg)
 	
 }
 
-int command_analysis(char *command)
-{
-	int i;
-	string command_str = command;
-	int command_tables_length = sizeof(command_tables) / sizeof(command_tables[0]);
-	cout << "buff length is :" << command_tables_length << endl;
-	for(i=0;i<=command_tables_length-1;i++)
-	{
-		if(command_str == command_tables[i])
-		{
-			return i;
-		}
-	}
-	return -1;	
-}
