@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "logining_user.h"
 #include "socket_user.h"
@@ -71,6 +72,13 @@ char logining_user::checkUserNamePassword(char *_name,char *_password)
 	
 }
 
+char logining_user::returnChar(unsigned char _data)
+{
+	unsigned char returnBuff[1] ={_data};
+	char wirteErr = write(this->get_socketid(),returnBuff,1);
+	return wirteErr;
+}
+
 void logining_user::set_socketid(int _iSocketid)
 {
 	m_iSocket_ID = _iSocketid;
@@ -104,4 +112,14 @@ void logining_user::set_protocol(char _protocol)
 char logining_user::get_protocol()
 {
 	return m_cProtocol;
+}
+
+void logining_user::set_clientVersion(unsigned int _clientVersion)
+{
+	m_iClientVersion = _clientVersion;
+}
+
+unsigned int logining_user::get_clientVersion()
+{
+	return m_iClientVersion;
 }

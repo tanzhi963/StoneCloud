@@ -32,20 +32,47 @@ void* socket_logining_user_thread(void *arg)
 		//当前客户端尚未上传通讯协议版本号
 		if(logining_user_new->get_status() == NOTGETVERSION)
 		{
-			if(strncmp("v",receive_buff,1) == 0)								//如果收到是版本指令
+			if(receive_buff[0] == 0x01)									//如果收到是版本指令
 			{
-				if(receive_buff[1] <= PROTOCOLCOUNT)							//数值是否小于总通讯协议版本数
+				if(receive_buff[1] < PROTOCOL)							//客户端通讯协议的版本号是旧版本
 				{
-					logining_user_new->set_protocol(receive_buff[1]);			//将版本号赋值实例
-					logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
-					returnBuff[0] = 0x00;
-					int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
+					logining_user_new->returnChar(0x83);				//有新版通讯协议更新，必须更新客户端，不允许登录
+				}
+				else if(receive_buff[1] == PROTOCOL)					//是最新的通讯协议
+				{
+					unsigned int clientVersion = 0;						//获取客户端版本号
+					for(int i=2;i<6;i++)
+					{
+						clientVersion |= (unsigned int)receive_buff[i] << ((5-i)*8);
+					}
+					if(clientVersion <= CLIENTVISION)					//客户端版本号合法
+					{
+						logining_user_new->set_protocol(receive_buff[1]);			//赋值通讯协议版本号
+						logining_user_new->set_clientVersion(clientVersion);		//赋值客户端版本号
+						logining_user_new->set_status(NOTGETUSERPASS);				//设置状态为未上传用户名密码
+						if(clientVersion == CLIENTVISION)
+						{
+							logining_user_new->returnChar(0x01);
+						}
+						else
+						{
+							logining_user_new->returnChar(0x02);
+						}
+					}
+					else												//客户端版本号异常，请重新发送
+					{
+						logining_user_new->returnChar(0x84);
+					}
+					
+				}
+				else													//收到错误版本号，可能收到残包
+				{
+					logining_user_new->returnChar(0x82);				//版本号未知，可能收到残包，请重新发送
 				}
 			}
-			else
+			else														//收到其他指令
 			{
-				returnBuff[0] = 0xff;
-				int wirteErr = write(logining_user_new->get_socketid(),returnBuff,1);
+				logining_user_new->returnChar(0xff);					//返回错误“-1”
 			}
 		}
 		//已经上传协议版本号，等待上传用户名和密码

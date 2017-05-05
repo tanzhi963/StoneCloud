@@ -13,7 +13,8 @@
 #define NOTGETUSERPASS 1				//用户已经发送完版本号，未发送用户名密码
 
 
-#define PROTOCOLCOUNT 1					//通讯协议种类数量
+#define PROTOCOL 1						//通讯协议版本号
+#define CLIENTVISION 0x00000001			//当前最新客户端版本号
 
 class logining_user 
 {
@@ -22,6 +23,10 @@ public:
 	logining_user(int _iSocketid);
 	~logining_user();
 
+
+	//类的方法
+	char checkUserNamePassword(char *_name,char *_password);
+	char returnChar(unsigned char _data);
 
 	//类的属性封装函数
 	void set_socketid(int _iSocketid);
@@ -33,7 +38,9 @@ public:
 	char get_protocol();
 	void set_userID(unsigned int _userID);
 	unsigned int get_userID();
-	char checkUserNamePassword(char *_name,char *_password);
+	void set_clientVersion(unsigned int _clientVersion);
+	unsigned int get_clientVersion();
+
 	
 private:
 	
@@ -43,6 +50,7 @@ private:
 	int m_iStatus;							//用户登录状态
 	char m_cProtocol;						//通讯版本号
 	unsigned int m_iUserID;					//用户唯一标识符
+	unsigned int m_iClientVersion;			//客户端版本号
 	
 };
 
