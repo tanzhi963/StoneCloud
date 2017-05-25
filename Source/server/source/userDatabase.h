@@ -17,6 +17,7 @@ public:
 	userDatabase();
 	~userDatabase();
 	bool exeSQL(string sql);
+	string getUserID(string _userName);
 
 private:
 	MYSQL *connection;

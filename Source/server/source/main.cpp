@@ -18,7 +18,19 @@ int main(int argc,char* argv[])
 
 
 	userDatabase userDB;
-	userDB.exeSQL("select * from user");
+//	userDB.exeSQL("select * from user");
+	try
+	{
+		string userID = userDB.getUserID("testuser1");
+		cout << "userID: " << hex << userID << endl;
+	}
+	catch(int err)
+	{
+		cout << err << endl;
+	}
+
+	// string userID = userDB.getUserID("testuser1");
+	// cout << userID << endl;
 
 	
 	create_thread_err = pthread_create(&socket_main_thread_tid,NULL,socket_mian_thread,NULL);
