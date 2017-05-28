@@ -73,34 +73,37 @@ bool userDatabase::exeSQL(string sql)
 string userDatabase::getUserID(string _userName)
 {
 	string _sqlQuery = "select id from user where userName = '" + _userName + "'";
-	int fieldCount = mysql_field_count(connection);
-	int fieldNum = mysql_num_fields(result);
 	if(mysql_query(connection, _sqlQuery.c_str()))		//如果连接失败
 	{
 		cout << "mysql query error:" << mysql_error(connection) << endl; 
 		throw 0x01;
 	}
 	result = mysql_use_result(connection); 				// 获取结果集
-	// if(fieldCount < 1)									//获取到结果小于一行，说明没有数据
-	// {
-	// 	throw 0x02;										//返回没有数据的异常
-	// }
-	if(fieldCount > 1)								//获取到不止一行数据，说明查询语句错误，或者数据库出现重复
+	int fieldCount = mysql_field_count(connection);
+	int fieldNum = mysql_num_fields(result);
+	row = mysql_fetch_row(result);
+
+	if(fieldCount < 1)									//获取到结果小于一行，说明没有数据
+	{
+		throw 0x02;										//返回没有数据的异常
+	}
+	else if(fieldCount > 1)								//获取到不止一行数据，说明查询语句错误，或者数据库出现重复
 	{
 		throw 0x03;										//返回数据非唯一异常
 	}
 	else												//说明有数据并且唯一
 	{
-		// if(fieldNum < 1)								//说明有这个用户名，没有ID
-		// {
-		// 	throw 0x04;									//返回没有ID
-		// }
-		if(fieldNum > 1)							//说明返回内容不仅包含ID，查询指令错误
+		if(fieldNum < 1)								//说明有这个用户名，没有ID
+		{
+			throw 0x04;									//返回没有ID
+		}
+		else if(fieldNum > 1)							//说明返回内容不仅包含ID，查询指令错误
 		{
 			throw 0x05;									//返回查询错误
 		}
 		else
 		{
+			//mysql_free_result(result);
 			return row[0];
 		}
 	}
