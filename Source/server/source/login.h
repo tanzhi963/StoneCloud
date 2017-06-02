@@ -1,5 +1,5 @@
-#ifndef SOCKET_USER
-#define SOCKET_USER
+#ifndef LOGIN
+#define LOGIN
 
 
 
@@ -29,7 +29,6 @@
 #define CMDINVALID 0xff					//无效指令，返回值
 
 
-void* socket_logining_user_thread(void *arg);
-void* socket_user_thread(void *arg);
+void* login(void *arg);
 
 #endif

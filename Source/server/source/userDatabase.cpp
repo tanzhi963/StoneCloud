@@ -72,6 +72,7 @@ bool userDatabase::exeSQL(string sql)
 
 string userDatabase::getUserID(string _userName)
 {
+	string _result;
 	string _sqlQuery = "select id from user where userName = '" + _userName + "'";
 	if(mysql_query(connection, _sqlQuery.c_str()))		//如果连接失败
 	{
@@ -103,8 +104,9 @@ string userDatabase::getUserID(string _userName)
 		}
 		else
 		{
-			//mysql_free_result(result);
-			return row[0];
+			_result = row[0];
+			mysql_free_result(result);
+			return _result;
 		}
 	}
 }

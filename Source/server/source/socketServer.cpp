@@ -1,19 +1,19 @@
-
 #include <iostream>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <pthread.h>
 
-#include "socket_server.h"
-#include "logining_user.h"
+#include "socketServer.h"
+#include "login.h"
 #include "user.h"
 
 using namespace std;
 
 
-void* socket_mian_thread(void *arg)
+void* socketServerThread(void *arg)
 {
 	cout << "socket mian thread created success!" << endl;
 	//创建套接字
@@ -36,7 +36,20 @@ void* socket_mian_thread(void *arg)
 	{
 		//等待用户发起请求
 		int clnt_sock = accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
-		logining_user *logining_user_new = new logining_user(clnt_sock);			//接收到请求，创建对象，将socket标识符写入对象属性
+        pthread_t _tid = 0;
+		user *newUser = new user();			
+        newUser->setSocketid(clnt_sock);
+
+        int createThreadErr = pthread_create(&_tid,NULL,login,(void*)newUser);
+        if(createThreadErr != 0)
+        {
+            cout << "create socket user thread failed! error code: " << createThreadErr << endl;
+        }
+        else
+        {
+            newUser->setTid(_tid);
+        }
+
 		
 	}
    
